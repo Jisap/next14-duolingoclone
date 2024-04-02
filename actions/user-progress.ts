@@ -23,7 +23,7 @@ export const upsertUserProgress = async (courseId: number) => {
 
   const existingUserProgress = await getUserProgress(); // Se busca un user cuyo id coincida con el user logueado
   if(existingUserProgress){                             // Si existe
-    await db.update(userProgress).set({                 // actualizamos el activeCourse con el id del curso que viene por argumento
+    await db.update(userProgress).set({                 // actualizamos en userProgress el activeCourse con el id del curso que viene por argumento
       activeCourseId: courseId,
       userName: user.firstName || "User",
       userImageSrc: user.imageUrl || "/mascot.svg"
