@@ -82,13 +82,13 @@ const main = async () => {
       },
     ]);
 
-    await db.insert(schema.challenges).values([
+    await db.insert(schema.challenges).values([ // Retos de la lección 1
       {
         id: 1,
         lessonId: 1, // Nouns
         type: "SELECT",
         order: 1,
-        question: 'Which one of these is the "the man"?',
+        question: 'Which one of these is the "the man"?', // Pregunta
       },
       {
         id: 2,
@@ -106,9 +106,9 @@ const main = async () => {
       },
     ]);
 
-    await db.insert(schema.challengeOptions).values([
+    await db.insert(schema.challengeOptions).values([   // opciones de resultado del reto n1 de la lección 1
       {
-        challengeId: 1, // Which one of these is "the man"?
+        challengeId: 1, // Which one of these is "the man"? 
         imageSrc: "/man.svg",
         correct: true,
         text: "el hombre",
@@ -130,7 +130,7 @@ const main = async () => {
       },
     ]);
 
-    await db.insert(schema.challengeOptions).values([
+    await db.insert(schema.challengeOptions).values([ // opciones de resultado para el reto nº2 de la lección 1
       {
         challengeId: 2, // "the man"?
         correct: true,
@@ -151,7 +151,7 @@ const main = async () => {
       },
     ]);
 
-    await db.insert(schema.challengeOptions).values([
+    await db.insert(schema.challengeOptions).values([ // opciones de resultado para el reto nº3 de la lección 1
       {
         challengeId: 3, // Which one of these is the "the robot"?
         imageSrc: "/man.svg",
@@ -175,7 +175,7 @@ const main = async () => {
       },
     ]);
 
-    await db.insert(schema.challenges).values([
+    await db.insert(schema.challenges).values([ // retos para la lección 2
       {
         id: 4,
         lessonId: 2, // Verbs
