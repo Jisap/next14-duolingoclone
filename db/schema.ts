@@ -16,11 +16,11 @@ export const units = pgTable("units", {
 });
 
 export const unitsRelations = relations(units, ({ many, one }) => ({
-  course: one(courses, {
+  course: one(courses, {        // Cada unidad pertenece a un curso
     fields: [units.courseId],
     references: [courses.id],
   }),
-  lessons: many(lessons),
+  lessons: many(lessons),       // Cada unidad puede tener muchas lecciones
 }));
 
 export const lessons = pgTable("lessons", {
@@ -31,11 +31,11 @@ export const lessons = pgTable("lessons", {
 });
 
 export const lessonsRelations = relations(lessons, ({ one, many }) => ({
-  unit: one(units, {
+  unit: one(units, {            // Cada lección pertence a una sola unidad
     fields: [lessons.unitId],
     references: [units.id],
   }),
-  challenges: many(challenges),
+  challenges: many(challenges), // Cada lección tendrá muchos retos
 }));
 
 export const challengesEnum = pgEnum("type", ["SELECT", "ASSIST"]);
@@ -49,12 +49,12 @@ export const challenges = pgTable("challenges", {
 });
 
 export const challengesRelations = relations(challenges, ({ one, many }) => ({
-  lesson: one(lessons, {
+  lesson: one(lessons, {            // Cada reto pertenece a una sola lección
     fields: [challenges.lessonId],
     references: [lessons.id],
   }),
-  challengeOptions: many(challengeOptions),
-  challengeProgress: many(challengeProgress),
+  challengeOptions: many(challengeOptions),   // Cada reto tendrá muchas opciones
+  challengeProgress: many(challengeProgress), // Cada reto tendrá muchas progresiones 
 }));
 
 export const challengeOptions = pgTable("challenge_options", {
@@ -67,7 +67,7 @@ export const challengeOptions = pgTable("challenge_options", {
 });
 
 export const challengeOptionsRelations = relations(challengeOptions, ({ one }) => ({
-  challenge: one(challenges, {
+  challenge: one(challenges, {              // las opciones del reto solo pertenecerán a un reto
     fields: [challengeOptions.challengeId],
     references: [challenges.id],
   }),
@@ -81,7 +81,7 @@ export const challengeProgress = pgTable("challenge_progress", {
 });
 
 export const challengeProgressRelations = relations(challengeProgress, ({ one }) => ({
-  challenge: one(challenges, {
+  challenge: one(challenges, {                  // El progreso del reto solo pertenecerá a un reto
     fields: [challengeProgress.challengeId],
     references: [challenges.id],
   }),
