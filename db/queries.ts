@@ -86,9 +86,9 @@ export const getCourseById = cache(async (courseId: number) => {
         }
 
         const allCompletedChallenges = lesson.challenges.every((challenge) => { // Si si tiene desafios iteramos los desafios -> challenge
-          return challenge.challengeProgress                                        // debe existir algún progreso registrado
-            && challenge.challengeProgress.length > 0                               // almenos debe existir un registro  
-            && challenge.challengeProgress.every((progress) => progress.completed); // la prop completed=true
+          return challenge.challengeProgress                                        // debe existir algún progreso registrado 
+            && challenge.challengeProgress.length > 0                               // y tener almenos un registro  
+            && challenge.challengeProgress.every((progress) => progress.completed); // ademas de tener la prop completed=true
         });                                                                     // every devolverá true si cada challenge tiene prog registrado y con la prop completed
 
         return { ...lesson, completed: allCompletedChallenges }; // Actualización de la estructura de lesson

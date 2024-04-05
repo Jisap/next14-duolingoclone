@@ -15,7 +15,7 @@ const LearnPage = async () => {
 
   const unitsData = getUnits()
 
-  const [userProgress, units] = await Promise.all([                        // Resolución de la promesa de userProgress
+  const [userProgress, units] = await Promise.all([                 // Resolución de la promesa de userProgress y de unitsData
     userProgressData,
     unitsData
   ]);
