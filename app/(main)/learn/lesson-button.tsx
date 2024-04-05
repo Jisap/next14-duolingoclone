@@ -46,7 +46,7 @@ const LessonButton = ({     // El componente calcula dinámicamente la posición
   const isLast = index === totalCount;         // Establece isLast como true si index === número total del lecciones 
   const isCompleted = !current && !locked;     // Establece isCompleted como true si no es la lección actual y no está bloqueada.
 
-  const Icon = isCompleted ? Check : isLast ? Crown : Star;
+  const Icon = isCompleted ? Check : isLast ? Crown : Star; // Icon a mostrar
 
   const href = isCompleted ? `/lesson/${id}` : "/lesson";
 
@@ -68,9 +68,7 @@ const LessonButton = ({     // El componente calcula dinámicamente la posición
             {/* banner */}
             <div className="absolute -top-6 left-2.5 px-3 py-2.5 border-2 font-bold uppercase text-green-500 bg-white rounded-xl animate-bounce tracking-wide z-10">
               Start
-              <div
-                className="absolute left-1/2 -bottom-2 w-0 h-0 border-x-8 border-x-transparent border-t-8 transform -translate-x-1/2"
-              />
+              <div className="absolute left-1/2 -bottom-2 w-0 h-0 border-x-8 border-x-transparent border-t-8 transform -translate-x-1/2" />
             </div>
             {/* Círculo de progreso alrededor del boton */}
             <CircularProgressbarWithChildren
