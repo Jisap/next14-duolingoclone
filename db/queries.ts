@@ -100,3 +100,48 @@ export const getCourseById = cache(async (courseId: number) => {
     return normalizedData;
 
   });
+
+export const getCourseProgress = cache(async () => {
+
+  const { userId } = await auth();
+  const userProgress = await getUserProgress();
+
+  if (!userId || !userProgress?.activeCourseId) {
+    return null;
+  }
+
+  const unitsInActiveCourse = await db.query.units.findMany({
+    orderBy: (units, { asc }) => [asc(units.order)],
+    where: eq(units.courseId, userProgress.activeCourseId),   // Se buscán la units que satisfagan las relaciónes establecidas en el schema
+    with: {                                                   // osea las units pertenecientes a un curso marcado como activo por un user
+      lessons: {                                              // Incluyendo las lessons
+        orderBy: (lessons, { asc }) => [asc(lessons.order)],
+        with: {
+          unit: true,
+          challenges: {                                       // Incluyendo los chanllenges de cada lesson
+            with: {
+              challengeProgress: {                            // y su progreso
+                where: eq(challengeProgress.userId, userId),  // donde el "propietario" del reto = usuario logueado
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  const firstUncompletedLesson = unitsInActiveCourse          // Obtenemos la primera lesson incompleta de las units del curso activo
+    .flatMap((unit) => unit.lessons)                          // Se ponen las units en un solo array.
+    .find((lesson) => {                                       // Sobre ese array se busca una lesson
+      return lesson.challenges.some((challenge) => {          // se busca una lección donde al menos uno de los desafíos asociados  
+        return !challenge.challengeProgress                   // no esté completado.
+          || challenge.challengeProgress.length === 0
+          || challenge.challengeProgress.some((progress) => progress.completed === false)
+      });
+    });
+
+  return {
+    activeLesson: firstUncompletedLesson,                      // Se devuelve la primera lesson incompleta y su id 
+    activeLessonId: firstUncompletedLesson?.id,
+  };
+})
