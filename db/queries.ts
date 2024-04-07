@@ -2,7 +2,7 @@ import { cache } from "react";
 import { db } from "./drizzle";
 import { auth } from "@clerk/nextjs";
 import { eq } from "drizzle-orm";
-import { challengeProgress, courses, units, userProgress } from "./schema";
+import { challengeProgress, courses, lessons, units, userProgress } from "./schema";
 
 
 export const getUserProgress = cache(async() => {
@@ -144,4 +144,49 @@ export const getCourseProgress = cache(async () => {
     activeLesson: firstUncompletedLesson,                      // Se devuelve la primera lesson incompleta y su id 
     activeLessonId: firstUncompletedLesson?.id,
   };
+})
+
+export const getLesson = cache(async (id?: number) => {
+  const { userId } = await auth();
+
+  if (!userId) {
+    return null;
+  }
+
+  const courseProgress = await getCourseProgress();             // activeLesson: firstUncompletedLesson,activeLessonId: firstUncompletedLesson?.id,
+
+  const lessonId = id || courseProgress?.activeLessonId;
+
+  if (!lessonId) {
+    return null;
+  }
+
+  const data = await db.query.lessons.findFirst({
+    where: eq(lessons.id, lessonId),                            // Se busca la lesson cuyo id = al pasado por parámetro o a activeLesson
+    with: {
+      challenges: {
+        orderBy: (challenges, { asc }) => [asc(challenges.order)],
+        with: {
+          challengeOptions: true,
+          challengeProgress: {
+            where: eq(challengeProgress.userId, userId),        // incluyendo los retos cuyo userId = user logueado
+          },
+        },
+      },
+    },
+  });
+
+  if (!data || !data.challenges) {
+    return null;
+  }
+
+  const normalizedChallenges = data.challenges.map((challenge) => {
+    const completed = challenge.challengeProgress
+      && challenge.challengeProgress.length > 0
+      && challenge.challengeProgress.every((progress) => progress.completed)
+
+    return { ...challenge, completed };
+  });
+
+  return { ...data, challenges: normalizedChallenges }
 })
