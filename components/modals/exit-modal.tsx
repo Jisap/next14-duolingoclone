@@ -22,15 +22,17 @@ const ExitModal = () => {
   const { isOpen, close } = useExitModal();
 
   useEffect(() => setIsClient(true), []); // true indica que el componente esta en lado del cliente
-
+                                          // La actualización de estado provoca la hidratación del componente 
   if (!isClient) {
     return null;
   }
 
 
-  return (
-    
-    <Dialog open={isOpen} onOpenChange={close}>
+  return (  
+    <Dialog 
+      open={isOpen} 
+      onOpenChange={close}
+    >
       <DialogContent className="max-w-md">
         <DialogHeader>
           <div className="flex items-center w-full justify-center mb-5">
