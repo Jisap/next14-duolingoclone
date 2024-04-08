@@ -20,8 +20,8 @@ const LessonButton = ({     // El componente calcula dinámicamente la posición
   id,                       // en función del índice de la lección (index).
   index,
   totalCount,
-  locked,
-  current,
+  current,                  // unit seleccionada si lesson iterada = activeLesson
+  locked,                   // unit bloqueada si lesson.completed = false  y no es la seleccionada
   percentage
 }: Props) => {
 
@@ -40,11 +40,11 @@ const LessonButton = ({     // El componente calcula dinámicamente la posición
     indentationLevel = cycleIndex - 8;  // el botón se desplaza hacia la derecha después de completar un ciclo completo. identationLevel = 4-7 = -3 // 4 - 0 = 4
   }
 
-  const rightPosition = indentationLevel * 40; // Aplicando un valor + o + al estilo right determina el movimiento del boton 
+  const rightPosition = indentationLevel * 40; // Aplicando un valor + o - al estilo right determina el movimiento del boton 
 
   const isFirst = index === 0;                 // Establece isFirst como true si index === 0
   const isLast = index === totalCount;         // Establece isLast como true si index === número total del lecciones 
-  const isCompleted = !current && !locked;     // Establece isCompleted como true si no es la lección actual y no está bloqueada.
+  const isCompleted = !current && !locked;     // Establece isCompleted como true si no es la lección actual (activeLesson) y lesson esta completada.
 
   const Icon = isCompleted ? Check : isLast ? Crown : Star; // Icon a mostrar
 

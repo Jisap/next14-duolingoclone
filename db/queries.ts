@@ -185,8 +185,8 @@ export const getLesson = cache(async (id?: number) => {
     return null;
   }
 
-  const normalizedChallenges = data.challenges.map((challenge) => {  // Se obtiene cada reto de la activeLesson (o leccion desde arg id) y de cada reto obtendremos
-    
+  const normalizedChallenges = data.challenges.map((challenge) => {  // Se obtiene cada reto de la activeLesson (o leccion desde arg id) 
+                                                                     // y en cada reto actualizaremos la prop completed. 
     const completed = challenge.challengeProgress                    // completed = true si al menos un progreso del reto está registrado,  
       && challenge.challengeProgress.length > 0                      // la longitud del array challenge.challengeProgress es mayor que 0,
       && challenge.challengeProgress.every((progress) => progress.completed) //  y todos los progresos registrados están completos.
@@ -194,7 +194,7 @@ export const getLesson = cache(async (id?: number) => {
     return { ...challenge, completed };                              // Se devuelve el reto con la prop completed actualizada
   });
 
-  return { ...data, challenges: normalizedChallenges } // Se devuelve la lesson de la id del parámetro o de la activeLesson con los retos actualizados
+  return { ...data, challenges: normalizedChallenges } // Se devuelve la lesson según id del parámetro o de la activeLesson con los retos actualizados
 })
 
 
