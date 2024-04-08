@@ -2,9 +2,15 @@ import { FeedWrapper } from "@/components/feed-wrapper"
 import { StickyWrapper } from "@/components/sticky-wrapper"
 import { Header } from "./header"
 import { UserProgress } from "@/components/user-progress"
-import { getUnits, getUserProgress } from "@/db/queries"
+import { 
+  getCourseProgress,
+  getLessonPercentage, 
+  getUnits, 
+  getUserProgress 
+} from "@/db/queries"
 import { redirect } from "next/navigation"
 import { Unit } from "./unit"
+import { lessons, units as unitsSchema } from "@/db/schema"
 
 
 
@@ -12,15 +18,27 @@ import { Unit } from "./unit"
 const LearnPage = async () => {
 
   const userProgressData = getUserProgress()                        // userProgress de usuario logueado
-
+  const courseProgressData = getCourseProgress()                    // activeLesson: firstUncompletedLesson,activeLessonId: firstUncompletedLesson?.id,
+  const lessonPercentageData = getLessonPercentage()                // porcentaje de desafíos completados en una lección activa.
   const unitsData = getUnits()
 
-  const [userProgress, units] = await Promise.all([                 // Resolución de la promesa de userProgress y de unitsData
+  const [
+    userProgress,
+    units,
+    courseProgress,
+    lessonPercentage,
+  ] = await Promise.all([                 // Resolución de la promesa de userProgress, unitsData, courseProgressData y lessonPercentageData
     userProgressData,
-    unitsData
+    unitsData,
+    courseProgressData,
+    lessonPercentageData
   ]);
 
   if(!userProgress || !userProgress.activeCourse) {
+    redirect("/courses")
+  }
+
+  if(!courseProgress){
     redirect("/courses")
   }
 
@@ -44,8 +62,10 @@ const LearnPage = async () => {
               description={unit.description}
               title={unit.title}
               lessons={unit.lessons}
-              activeLesson={undefined}
-              activeLessonPercentage={0}
+              activeLesson={courseProgress.activeLesson as typeof lessons.$inferSelect & {
+                unit: typeof unitsSchema.$inferSelect
+              } | undefined }
+              activeLessonPercentage={lessonPercentage}
             />
           </div>
         ))}
