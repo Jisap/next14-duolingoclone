@@ -3,7 +3,7 @@
 import { challengeOptions, challenges } from "@/db/schema";
 import { Header } from "./header";
 import { useState } from "react";
-import { QuestionBubble } from "./question-buble";
+import { QuestionBubble } from "./question-bubble";
 
 type Props = {
   initialPercentage: number;
