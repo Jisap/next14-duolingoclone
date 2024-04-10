@@ -25,7 +25,18 @@ export const Quiz = ({
   
   const [hearts, setHearts] = useState(initialHearts);
   const [percentage, setPercentage] = useState(initialPercentage);
+  const [challenges] = useState(initialLessonChallenges);
+  
+  const [activeIndex, setActiveIndex] = useState(() => {                                // Lazy initialization -> la función se ejecuta solo 1 vez cuando se montael componente
+    const uncompletedIndex = challenges.findIndex((challenge) => !challenge.completed)  // Se busca el índice del primer elemento que no tenga el reto completado 
+    return uncompletedIndex === -1 ? 0 : uncompletedIndex                               // Si ningún reto esta incompleto devuelve -1 -> uncompletedIndex=0 
+  });
 
+  const challenge = challenges[activeIndex];                                            // Challenge contendrá el desafío actual
+
+  const title = challenge.type == "ASSIST" 
+    ? "Select the correct meaning"
+    : challenge.question 
 
   return (
 
@@ -36,6 +47,18 @@ export const Quiz = ({
         percentage={percentage}
         hasActiveSubscription={!!userSubscription?.isActive}
       />
+      <div className="flex-1">
+        <div className="h-full flex items-center justify-center">
+          <div className="lg:min-h-[350px] lg:w-[600px] w-full px-6 lg:px-0 flex flex-col gap-y-12">
+            <h1 className="text-lg lg:text-3xl text-center lg:text-start font-bold text-neutral-700">
+              {title}
+            </h1>
+            <div>
+              {/* TODO: Challenge Component */}
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   )
 }
