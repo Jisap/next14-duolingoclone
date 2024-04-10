@@ -54,6 +54,40 @@ const Card: FC<CardProps> = ({
           />
         </div>
       )}
+
+      <div
+        className={cn(
+          "flex justify-between items-center",
+          type === "ASSIST" && "flex-row-reverse"
+        )}
+      >
+        {type === "ASSIST" && <div />}
+        <p
+          className={cn(
+            "text-neutral-600 text-sm lg:text-base",
+            selected && "border-sky-300 text-sky-500",
+            selected && status === "correct" 
+              && "text-green-500 border-green-500",
+            selected && status === "wrong" && "text-rose-500 border-rose-500"
+          )}
+        >
+          {text}
+        </p>
+
+        <div
+          className={cn(
+            "lg:size-8 size-5 border-2 flex items-center justify-center rounded-lg to-neutral-400 lg:text-[15px] text-xs font-semibold",
+            selected && "border-sky-300 text-sky-500",
+            selected && status === "correct" 
+              && "border-green-300 text-green-500",
+            selected && status === "wrong" && "border-rose-300 text-rose-500"
+          )}
+        >
+          {shortcut}
+        </div>
+
+      </div>
+
     </div>
   )
 }
