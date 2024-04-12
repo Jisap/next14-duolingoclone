@@ -5,6 +5,8 @@ import { Header } from "./header";
 import { useState } from "react";
 import { QuestionBubble } from "./question-bubble";
 import { Challenge } from "./challenge";
+import { Footer } from "./footer";
+
 
 type Props = {
   initialPercentage: number;
@@ -44,7 +46,7 @@ export const Quiz = ({
   const [selectedOption, setSelectedOption] = useState<number>();
   const [status, setStatus] = useState<"none" | "wrong" | "correct">("none");
 
-  const onSelect = (id: number) => {                                                    // Establece el estado de selectedOption
+  const onSelect = (id: number) => {                                                    // Establece el estado de selectedOption con el id de la option
     if (status !== "none") return;
 
     setSelectedOption(id);
@@ -58,6 +60,7 @@ export const Quiz = ({
         percentage={percentage}
         hasActiveSubscription={!!userSubscription?.isActive}
       />
+
       <div className="flex-1">
         <div className="h-full flex items-center justify-center">
           <div className="lg:min-h-[350px] lg:w-[600px] w-full px-6 lg:px-0 flex flex-col gap-y-12">
@@ -70,9 +73,9 @@ export const Quiz = ({
               )}
               <Challenge 
                 options={options}
-                onSelect={onSelect}
-                status={status}
-                selectedOption={selectedOption}
+                onSelect={onSelect}                 // Función que establece el state de selectedOption
+                status={status}                     // Por defecto "none"
+                selectedOption={selectedOption}     // Estado de selectedOption
                 disabled={false}
                 type={challenge.type}
               />
@@ -80,6 +83,12 @@ export const Quiz = ({
           </div>
         </div>
       </div>
+
+      <Footer
+        onCheck={() => {}}
+        status={status}
+        disabled={!selectedOption}
+      />
     </>
   )
 }
