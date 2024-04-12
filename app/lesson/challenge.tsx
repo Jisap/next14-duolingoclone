@@ -26,8 +26,7 @@ export const Challenge: FC<ChallengeProps> = ({
       className={cn(
         "grid gap-2",
         type === "ASSIST" && "grid-cols-1",
-        type === "SELECT" &&
-        "grid-cols-2 lg:grid-cols-[repeat(auto-fit,minmax(0,1fr))]"
+        type === "SELECT" && "grid-cols-2 lg:grid-cols-[repeat(auto-fit,minmax(0,1fr))]"
       )}
     >
       {options.map((option, i) => (
@@ -37,8 +36,8 @@ export const Challenge: FC<ChallengeProps> = ({
           text={option.text}
           imgSrc={option.imageSrc}
           shortcut={`${i + 1}`}
-          selected={selectedOption === option.id}
-          onClick={() => onSelect(option.id)}
+          onClick={() => onSelect(option.id)}       // Establece el estado de selectedOption según id de la option -> selected
+          selected={selectedOption === option.id}   // selected = true si se pulso la option.id = estado de selectedOption
           status={status}
           audioSrc={option.audioSrc}
           disabled={disabled}

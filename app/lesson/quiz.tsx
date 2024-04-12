@@ -29,7 +29,7 @@ export const Quiz = ({
   const [percentage, setPercentage] = useState(initialPercentage);
   const [challenges] = useState(initialLessonChallenges);
   
-  const [activeIndex, setActiveIndex] = useState(() => {                                // Lazy initialization -> la función se ejecuta solo 1 vez cuando se montael componente
+  const [activeIndex, setActiveIndex] = useState(() => {                                // Lazy initialization -> la función se ejecuta solo 1 vez cuando se monta el componente
     const uncompletedIndex = challenges.findIndex((challenge) => !challenge.completed)  // Se busca el índice del primer elemento que no tenga el reto completado 
     return uncompletedIndex === -1 ? 0 : uncompletedIndex                               // Si ningún reto esta incompleto devuelve -1 -> uncompletedIndex=0 
   });
@@ -41,7 +41,14 @@ export const Quiz = ({
     ? "Select the correct meaning"
     : challenge.question 
 
-    
+  const [selectedOption, setSelectedOption] = useState<number>();
+  const [status, setStatus] = useState<"none" | "wrong" | "correct">("none");
+
+  const onSelect = (id: number) => {                                                    // Establece el estado de selectedOption
+    if (status !== "none") return;
+
+    setSelectedOption(id);
+  };
 
   return (
   
@@ -63,9 +70,9 @@ export const Quiz = ({
               )}
               <Challenge 
                 options={options}
-                onSelect={() => {}}
-                status="none"
-                selectedOption={undefined}
+                onSelect={onSelect}
+                status={status}
+                selectedOption={selectedOption}
                 disabled={false}
                 type={challenge.type}
               />

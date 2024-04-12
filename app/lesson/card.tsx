@@ -31,9 +31,26 @@ const Card: FC<CardProps> = ({
   type,
   selected,
 }) => {
+
+  const [audio, _, controls] = useAudio({ src: audioSrc || "" }); // Inicializa una instancia de reproducción de audio
+
+  const handleClick = useCallback(() => { // useCallback indica a React que memorice una función específica y solo la vuelva a crear si alguna de sus dependencias cambia.
+    if (disabled) return;
+
+    controls.play();                      // Reproduce el audio sino esta desactivado
+
+    onClick();                            // Llama a la función onClick
+  }, [disabled, onClick, controls]);
+
+        //nº tecla //fnc que activa
+  useKey(shortcut, handleClick, {}, [handleClick]); // Inicializa una instancia de control de eventos de teclado
+
+
+
   return (
+
     <div 
-      onClick={() => {}}
+      onClick={handleClick}
       className={cn(
         "h-full border-2 rounded-xl border-b-4 hover:bg-black/5 p-4 lg:p-6 cursor-pointer active:border-b-2",
         selected && "border-sky-300 bg-sky-100 hover:bg-sky-100",
@@ -45,6 +62,7 @@ const Card: FC<CardProps> = ({
         type === "ASSIST" && "lg:p-3 w-full"
       )}  
     >
+      {audio}
       {imgSrc && (
         <div className="relative aspect-square mb-4 max-h-[80px] lg:max-h-[150px] w-full">
           <Image 
@@ -58,7 +76,7 @@ const Card: FC<CardProps> = ({
       <div
         className={cn(
           "flex justify-between items-center",
-          type === "ASSIST" && "flex-row-reverse"
+          type === "ASSIST" && "flex-row-reverse" // assit tiene más de 2 elementos
         )}
       >
         {type === "ASSIST" && <div />}
