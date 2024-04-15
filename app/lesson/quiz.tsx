@@ -102,7 +102,9 @@ export const Quiz = ({
           .catch(() => toast.error("Something went wrong, plz try again !"));
       })
     }else{
-      console.log("Incorrect option")
+      startTransition(() => {
+        
+      });
     }
   }
 
@@ -130,7 +132,7 @@ export const Quiz = ({
                 onSelect={onSelect}                 // Función que establece el state de selectedOption
                 status={status}                     // Por defecto "none"
                 selectedOption={selectedOption}     // Estado de selectedOption
-                disabled={false}
+                disabled={pending}
                 type={challenge.type}
               />
             </div>
@@ -141,7 +143,7 @@ export const Quiz = ({
       <Footer
         onCheck={onContinue}
         status={status}
-        disabled={!selectedOption}
+        disabled={pending || !selectedOption}
       />
     </>
   )
