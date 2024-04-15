@@ -2,10 +2,12 @@
 
 import { challengeOptions, challenges } from "@/db/schema";
 import { Header } from "./header";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { QuestionBubble } from "./question-bubble";
 import { Challenge } from "./challenge";
 import { Footer } from "./footer";
+import { upsertChallengeProgress } from "@/actions/challenge-progress";
+import { toast } from "sonner";
 
 
 type Props = {
@@ -27,17 +29,20 @@ export const Quiz = ({
   userSubscription
 }: Props) => {
   
+  const [pending, startTransition] = useTransition();
   const [hearts, setHearts] = useState(initialHearts);
   const [percentage, setPercentage] = useState(initialPercentage);
   const [challenges] = useState(initialLessonChallenges);
   
+  // activeIndex -> challenge -> options -> correctOption -> (si correctOption.id === selectedOption) -> upsertChallengeProgress(chalenge.id)
+
   const [activeIndex, setActiveIndex] = useState(() => {                                // Lazy initialization -> la función se ejecuta solo 1 vez cuando se monta el componente
     const uncompletedIndex = challenges.findIndex((challenge) => !challenge.completed)  // Se busca el índice del primer elemento que no tenga el reto completado 
     return uncompletedIndex === -1 ? 0 : uncompletedIndex                               // Si ningún reto esta incompleto devuelve -1 -> uncompletedIndex=0 
   });
 
-  const challenge = challenges[activeIndex];                                            // Challenge contendrá el desafío actual
-  const options = challenge?.challengeOptions ?? [];
+  const challenge = challenges[activeIndex];                                            // Challenge contendrá el desafío actual en base a ese índice de reto no completado
+  const options = challenge?.challengeOptions ?? [];                                    // options contendrá los retos del desafio actual
 
   const title = challenge.type == "ASSIST" 
     ? "Select the correct meaning"
@@ -77,8 +82,25 @@ export const Quiz = ({
 
     if(!correctOption) return
 
-    if(correctOption && correctOption.id === selectedOption){
-      console.log("Correct option")
+    if(correctOption && correctOption.id === selectedOption){   // Si la option correcta = a la seleccionada -> modificamos bd
+      startTransition(() => {
+        upsertChallengeProgress(challenge.id)   
+          .then((res) => {
+            if (res?.error === "hearts") {
+              console.error("Missing hearts");
+              return;
+            }
+
+            setStatus("correct");
+            setPercentage((prev) => prev + 100 / challenges.length);
+
+            // This is practice
+            if (initialPercentage === 100) {
+              setHearts((prev) => Math.min(prev + 1, 5));
+            }
+          })
+          .catch(() => toast.error("Something went wrong, plz try again !"));
+      })
     }else{
       console.log("Incorrect option")
     }
