@@ -52,6 +52,38 @@ export const Quiz = ({
     setSelectedOption(id);
   };
 
+  const onNext = () => {
+    setActiveIndex ((current) => current + 1)
+  } 
+
+  const onContinue = () => { // Se llamará tanto si es correcta como si no lo es la respuesta
+
+    if(!selectedOption) return
+
+    if(status === "wrong") {
+      setStatus("none")
+      setSelectedOption(undefined)
+      return
+    }
+
+    if (status === "correct") {
+      onNext()
+      setStatus("none")
+      setSelectedOption(undefined)
+      return
+    }
+
+    const correctOption = options.find((option) => option.correct);
+
+    if(!correctOption) return
+
+    if(correctOption && correctOption.id === selectedOption){
+      console.log("Correct option")
+    }else{
+      console.log("Incorrect option")
+    }
+  }
+
   return (
   
     <>
@@ -85,7 +117,7 @@ export const Quiz = ({
       </div>
 
       <Footer
-        onCheck={() => {}}
+        onCheck={onContinue}
         status={status}
         disabled={!selectedOption}
       />
