@@ -75,7 +75,7 @@ export const reduceHearts = async (challengeId: number) => {
   });
 
   const isPractice = !!existingChallengeProgress;       // Si existe algún progreso para el usuario en el desafío, se considera que el desafío ya ha sido
-                                                        // practicado previamente, y se devuelve un objeto indicando que es una práctica.
+                                                        // practicado previamente, y se devuelve un boolean indicando que es una práctica o no.
   
   if (isPractice) {                                     // Si es una práctica la funcíon devuelve un error con el mensaje "practice"      
     return { error: "practice" };
