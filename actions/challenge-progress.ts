@@ -15,13 +15,13 @@ export const upsertChallengeProgress = async (challengeId: number) => {
     throw new Error("Unauthorized");
   }
 
-  const currentUserProgress = await getUserProgress(); // Se busca en userProgress el userId que coincida con userId logueado
+  const currentUserProgress = await getUserProgress();                          // Se busca en userProgress el userId que coincida con userId logueado
 
   if (!currentUserProgress) {
     throw new Error("User not found");
   }
 
-  const challenge = await db.query.challenges.findFirst({ // Buscamos el primer reto que coincida con el del id pasado por argumento
+  const challenge = await db.query.challenges.findFirst({                       // Buscamos el primer reto que coincida con el del id pasado por argumento
     where: eq(challenges.id, challengeId),
   });
 
@@ -29,7 +29,7 @@ export const upsertChallengeProgress = async (challengeId: number) => {
     throw new Error("Challenge not found");
   }
 
-  const lessonId = challenge.lessonId;  // Del reto que se analiza se obtiene la lessonId
+  const lessonId = challenge.lessonId;                                           // Del reto que se analiza se obtiene la lessonId que se usará en el revalidate
 
   const existingChallengeProgress = await db.query.challengeProgress.findFirst({ // De la tabla de challengeProgress se obtiene la primera coincidencia
     where: and(                                                                  // donde (and combina multiples filtros)
@@ -40,14 +40,12 @@ export const upsertChallengeProgress = async (challengeId: number) => {
 
   const isPractice = !!existingChallengeProgress; // Si existe challengeProgress isPractice = true -> el usuario ya ha completado previamente el desafío (es una práctica)
 
-  if (
-    currentUserProgress.hearts === 0 && !isPractice 
-  ) {
+  if (currentUserProgress.hearts === 0 && !isPractice ) {
     return { error: "hearts" };
   }
 
   // Aquí el usuario ya ha completado previamente el desafío (es una práctica)
-
+  
   if (isPractice) {                                                         // Si existe isPractice (challengeProgress)
     await db                                                                
       .update(challengeProgress)                                            // actualizamos en bd challengeProgress

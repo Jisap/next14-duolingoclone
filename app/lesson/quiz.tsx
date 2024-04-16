@@ -8,6 +8,7 @@ import { Challenge } from "./challenge";
 import { Footer } from "./footer";
 import { upsertChallengeProgress } from "@/actions/challenge-progress";
 import { toast } from "sonner";
+import { reduceHearts } from "@/actions/user-progress";
 
 
 type Props = {
@@ -42,7 +43,7 @@ export const Quiz = ({
   });
 
   const challenge = challenges[activeIndex];                                            // Challenge contendrá el desafío actual en base a ese índice de reto no completado
-  const options = challenge?.challengeOptions ?? [];                                    // options contendrá los retos del desafio actual
+  const options = challenge?.challengeOptions ?? [];                                    // options contendrá las opciones de respuesta del desafio actual
 
   const title = challenge.type == "ASSIST" 
     ? "Select the correct meaning"
@@ -61,7 +62,7 @@ export const Quiz = ({
     setActiveIndex ((current) => current + 1)
   } 
 
-  const onContinue = () => { // Se llamará tanto si es correcta como si no lo es la respuesta
+  const onContinue = () => {                                                            // Se llamará tanto si es correcta como si no lo es la respuesta
 
     if(!selectedOption) return
 
@@ -78,21 +79,21 @@ export const Quiz = ({
       return
     }
 
-    const correctOption = options.find((option) => option.correct);
+    const correctOption = options.find((option) => option.correct);                     // De las opciones del desafio actual se busca la que tiene correct:true
 
     if(!correctOption) return
 
-    if(correctOption && correctOption.id === selectedOption){   // Si la option correcta = a la seleccionada -> modificamos bd
+    if(correctOption && correctOption.id === selectedOption){                           // Si la option correcta = a la seleccionada -> modificamos bd
       startTransition(() => {
-        upsertChallengeProgress(challenge.id)   
+        upsertChallengeProgress(challenge.id)                                           // Se modfican completed, hearts y points
           .then((res) => {
             if (res?.error === "hearts") {
               console.error("Missing hearts");
               return;
             }
 
-            setStatus("correct");
-            setPercentage((prev) => prev + 100 / challenges.length);
+            setStatus("correct");                                                       // status:"correct"
+            setPercentage((prev) => prev + 100 / challenges.length);                    // Se establece el percentage de acierto    
 
             // This is practice
             if (initialPercentage === 100) {
@@ -101,10 +102,26 @@ export const Quiz = ({
           })
           .catch(() => toast.error("Something went wrong, plz try again !"));
       })
-    }else{
+    }else{                                                                              // si la option no es la correcta
       startTransition(() => {
-        
-      });
+        reduceHearts(challenge.id)                                                      // reducimos los corazones
+          .then((res) => {
+            if (res?.error === "hearts") {                                              // (Si al usuario no le quedán corazones mensaje de error)
+              console.error("Missing hearts");
+              //openHeartsModal();
+              return;
+            }
+
+            setStatus("wrong");                                                         // Status:"wrong"
+
+            if (!res?.error) {                                                          // Si no hay ningún error en la respuesta de reduceHearts se establece el state de hearts
+              setHearts((prev) => Math.max(prev - 1, 0));                               // Si el estado anterior (prev) es mayor que 0, se resta 1 para indicar que el usuario ha perdido un corazón. 
+            }                                                                           // Si prev ya es 0, el número de corazones se mantiene en 0.
+          })
+          .catch(() => {
+            toast.error("Something went wrong. plz try again !");
+          });
+      })
     }
   }
 
