@@ -1,14 +1,18 @@
 "use client"
 
 import { challengeOptions, challenges } from "@/db/schema";
-import { Header } from "./header";
 import { useState, useTransition } from "react";
+import { useAudio } from "react-use";
+import { Header } from "./header";
 import { QuestionBubble } from "./question-bubble";
 import { Challenge } from "./challenge";
 import { Footer } from "./footer";
 import { upsertChallengeProgress } from "@/actions/challenge-progress";
 import { toast } from "sonner";
 import { reduceHearts } from "@/actions/user-progress";
+import Image from "next/image";
+import ResultCard from "./ResultCard";
+import { useRouter } from "next/navigation";
 
 
 type Props = {
@@ -29,7 +33,24 @@ export const Quiz = ({
   initialLessonChallenges,
   userSubscription
 }: Props) => {
+
+  const router = useRouter();
+
   
+  const [correctAudio, _c, correctAudioControls] = useAudio({
+    src: "/correct.wav",
+  });
+
+  const [incorrectAudio, _i, incorrectAudioControls] = useAudio({
+    src: "/incorrect.wav",
+  });
+
+  const [finishAudio] = useAudio({
+    src: "/finish.mp3",
+    autoPlay: true,
+  });
+
+  const [lessonId] = useState(initialLessonId);                                         // lesson con los retos actualizados
   const [pending, startTransition] = useTransition();
   const [hearts, setHearts] = useState(initialHearts);
   const [percentage, setPercentage] = useState(initialPercentage);
@@ -44,10 +65,6 @@ export const Quiz = ({
 
   const challenge = challenges[activeIndex];                                            // Challenge contendrá el desafío actual en base a ese índice de reto no completado
   const options = challenge?.challengeOptions ?? [];                                    // options contendrá las opciones de respuesta del desafio actual
-
-  const title = challenge.type == "ASSIST" 
-    ? "Select the correct meaning"
-    : challenge.question 
 
   const [selectedOption, setSelectedOption] = useState<number>();
   const [status, setStatus] = useState<"none" | "wrong" | "correct">("none");
@@ -92,6 +109,8 @@ export const Quiz = ({
               return;
             }
 
+            correctAudioControls.play();
+
             setStatus("correct");                                                       // status:"correct"
             setPercentage((prev) => prev + 100 / challenges.length);                    // Se establece el percentage de acierto    
 
@@ -112,6 +131,8 @@ export const Quiz = ({
               return;
             }
 
+            incorrectAudioControls.play();
+
             setStatus("wrong");                                                         // Status:"wrong"
 
             if (!res?.error) {                                                          // Si no hay ningún error en la respuesta de reduceHearts se establece el state de hearts
@@ -125,43 +146,91 @@ export const Quiz = ({
     }
   }
 
-  return (
-  
-    <>
-      <Header
-        hearts={hearts}
-        percentage={percentage}
-        hasActiveSubscription={!!userSubscription?.isActive}
-      />
+  if(true || !challenge){
+    return (
+      <>
+        {finishAudio}
+        <div className="flex flex-col gap-y-4 lg:gap-y-8 max-w-lg mx-auto text-center items-center justify-center h-full">
+          <Image 
+            src="/finish.svg"
+            alt="Finish"
+            className="hidden lg:block"
+            height={100}
+            width={100}
+          />
+          <Image
+            src="/finish.svg"
+            alt="Finish"
+            className="block lg:hidden"
+            height={50}
+            width={50}
+          />
+          
+          <h1 className="text-xl lg:text-3xl text-neutral-700 font-bold">
+            Great job ! <br /> You've completed the lesson.
+          </h1>
 
-      <div className="flex-1">
-        <div className="h-full flex items-center justify-center">
-          <div className="lg:min-h-[350px] lg:w-[600px] w-full px-6 lg:px-0 flex flex-col gap-y-12">
-            <h1 className="text-lg lg:text-3xl text-center lg:text-start font-bold text-neutral-700">
-              {title}
-            </h1>
-            <div>
-              {challenge.type === "ASSIST" && (
-                <QuestionBubble  question={challenge.question} />
-              )}
-              <Challenge 
-                options={options}
-                onSelect={onSelect}                 // Función que establece el state de selectedOption
-                status={status}                     // Por defecto "none"
-                selectedOption={selectedOption}     // Estado de selectedOption
-                disabled={pending}
-                type={challenge.type}
-              />
+          <div className="flex items-center gap-x-4 w-full">
+            <ResultCard 
+              variant="points" 
+              value={challenges.length * 10} 
+            />
+            <ResultCard
+              variant="hearts"
+              value={!!userSubscription?.isActive ? "active" : hearts}
+            />
+          </div>
+        </div>
+
+        <Footer
+          lessonId={lessonId}
+          status="completed"
+          onCheck={() => router.push("/learn")}
+        />
+      </>
+    )
+  }
+
+  return (
+    <>
+      { incorrectAudio }
+      { correctAudio }
+        <Header
+          hearts={hearts}
+          percentage={percentage}
+          hasActiveSubscription={!!userSubscription?.isActive}
+        />
+
+        <div className="flex-1">
+          <div className="h-full flex items-center justify-center">
+            <div className="lg:min-h-[350px] lg:w-[600px] w-full px-6 lg:px-0 flex flex-col gap-y-12">
+              <h1 className="text-lg lg:text-3xl text-center lg:text-start font-bold text-neutral-700">
+                {challenge.type === "ASSIST"
+                  ? "Select the correct meaning"
+                  : challenge.question}
+              </h1>
+              <div>
+                {challenge.type === "ASSIST" && (
+                  <QuestionBubble  question={challenge.question} />
+                )}
+                <Challenge 
+                  options={options}
+                  onSelect={onSelect}                 // Función que establece el state de selectedOption
+                  status={status}                     // Por defecto "none"
+                  selectedOption={selectedOption}     // Estado de selectedOption
+                  disabled={pending}
+                  type={challenge.type}
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <Footer
-        onCheck={onContinue}
-        status={status}
-        disabled={pending || !selectedOption}
-      />
+        <Footer
+          onCheck={onContinue}
+          status={status}
+          disabled={pending || !selectedOption}
+        />
     </>
   )
 }

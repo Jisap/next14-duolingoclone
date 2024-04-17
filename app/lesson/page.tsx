@@ -7,7 +7,7 @@ import { Quiz } from "./quiz";
 const LessonPage = async() => {
 
   const lessonData = getLesson();               // lesson con los retos actualizados
-  const userProgressData = getUserProgress();
+  const userProgressData = getUserProgress();   // Se busca en userProgress el userId que coincida con userId logueado
 
   const [
     lesson,
@@ -28,7 +28,7 @@ const LessonPage = async() => {
 
   return (
     <Quiz 
-      initialLessonId={lesson.id}
+      initialLessonId={lesson.id}                   // lesson con los retos actualizados
       initialLessonChallenges={lesson.challenges}
       initialHearts={userProgress.hearts}
       initialPercentage={initialPercentage}
