@@ -1,18 +1,20 @@
 "use client"
 
-import { challengeOptions, challenges } from "@/db/schema";
 import { useState, useTransition } from "react";
-import { useAudio } from "react-use";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { useAudio, useMount, useWindowSize } from "react-use";
+import Confetti from "react-confetti";
+import { challengeOptions, challenges } from "@/db/schema";
+import { upsertChallengeProgress } from "@/actions/challenge-progress";
+import { reduceHearts } from "@/actions/user-progress";
 import { Header } from "./header";
 import { QuestionBubble } from "./question-bubble";
 import { Challenge } from "./challenge";
 import { Footer } from "./footer";
-import { upsertChallengeProgress } from "@/actions/challenge-progress";
 import { toast } from "sonner";
-import { reduceHearts } from "@/actions/user-progress";
-import Image from "next/image";
 import ResultCard from "./ResultCard";
-import { useRouter } from "next/navigation";
+
 
 
 type Props = {
@@ -34,8 +36,20 @@ export const Quiz = ({
   userSubscription
 }: Props) => {
 
+  const { width, height } = useWindowSize();
+
   const router = useRouter();
 
+  // useMount(() => {
+  //   if (initialPercentage === 100) {
+  //     openPracticeModal();
+  //   }
+  // });
+
+  const [finishAudio] = useAudio({
+    src: "/finish.mp3",
+    autoPlay: true,
+  });
   
   const [correctAudio, _c, correctAudioControls] = useAudio({
     src: "/correct.wav",
@@ -45,10 +59,6 @@ export const Quiz = ({
     src: "/incorrect.wav",
   });
 
-  const [finishAudio] = useAudio({
-    src: "/finish.mp3",
-    autoPlay: true,
-  });
 
   const [lessonId] = useState(initialLessonId);                                         // lesson con los retos actualizados
   const [pending, startTransition] = useTransition();
@@ -146,10 +156,19 @@ export const Quiz = ({
     }
   }
 
-  if(true || !challenge){
+  if(!challenge){
     return (
       <>
         {finishAudio}
+
+        <Confetti
+          width={width}
+          height={height}
+          recycle={false}
+          numberOfPieces={500}
+          tweenDuration={10000}
+        />
+
         <div className="flex flex-col gap-y-4 lg:gap-y-8 max-w-lg mx-auto text-center items-center justify-center h-full">
           <Image 
             src="/finish.svg"
