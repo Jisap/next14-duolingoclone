@@ -23,8 +23,8 @@ export const Footer: FC<FooterProps> = ({
   const isMobile = useMedia("(max-width: 1024px)");
 
   const router = useRouter();
-  return (
 
+  return (
     <footer
       className={cn(
         "lg:h-[140px] h-[100px] border-t-2",

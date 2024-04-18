@@ -15,6 +15,7 @@ import { Footer } from "./footer";
 import { toast } from "sonner";
 import ResultCard from "./ResultCard";
 import { useHeartsModal } from "@/store/use-hearts-modal";
+import { usePracticeModal } from "@/store/use-practice-modal";
 
 
 
@@ -37,17 +38,18 @@ export const Quiz = ({
   userSubscription
 }: Props) => {
 
-  const{ open: openHeartsModal } = useHeartsModal()
+  const{ open: openHeartsModal } = useHeartsModal();
+  const { open: openPracticeModal } = usePracticeModal()
 
   const { width, height } = useWindowSize();
 
   const router = useRouter();
 
-  // useMount(() => {
-  //   if (initialPercentage === 100) {
-  //     openPracticeModal();
-  //   }
-  // });
+  useMount(() => {
+    if (initialPercentage === 100) {
+      openPracticeModal();
+    }
+  });
 
   const [finishAudio] = useAudio({
     src: "/finish.mp3",
