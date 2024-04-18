@@ -14,6 +14,7 @@ import { Challenge } from "./challenge";
 import { Footer } from "./footer";
 import { toast } from "sonner";
 import ResultCard from "./ResultCard";
+import { useHeartsModal } from "@/store/use-hearts-modal";
 
 
 
@@ -35,6 +36,8 @@ export const Quiz = ({
   initialLessonChallenges,
   userSubscription
 }: Props) => {
+
+  const{ open: openHeartsModal } = useHeartsModal()
 
   const { width, height } = useWindowSize();
 
@@ -115,7 +118,7 @@ export const Quiz = ({
         upsertChallengeProgress(challenge.id)                                           // Se modfican completed, hearts y points
           .then((res) => {
             if (res?.error === "hearts") {
-              console.error("Missing hearts");
+              openHeartsModal()
               return;
             }
 
@@ -136,8 +139,7 @@ export const Quiz = ({
         reduceHearts(challenge.id)                                                      // reducimos los corazones
           .then((res) => {
             if (res?.error === "hearts") {                                              // (Si al usuario no le quedán corazones mensaje de error)
-              console.error("Missing hearts");
-              //openHeartsModal();
+              openHeartsModal();
               return;
             }
 
