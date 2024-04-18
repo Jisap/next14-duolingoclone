@@ -68,7 +68,11 @@ export const Quiz = ({
   const [lessonId] = useState(initialLessonId);                                         // lesson con los retos actualizados
   const [pending, startTransition] = useTransition();
   const [hearts, setHearts] = useState(initialHearts);
-  const [percentage, setPercentage] = useState(initialPercentage);
+  const [percentage, setPercentage] = useState(() => {
+    return initialPercentage === 100
+      ? 0
+      : initialPercentage
+  });
   const [challenges] = useState(initialLessonChallenges);
   
   // activeIndex -> challenge -> options -> correctOption -> (si correctOption.id === selectedOption) -> upsertChallengeProgress(chalenge.id)
