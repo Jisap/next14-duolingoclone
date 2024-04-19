@@ -8,6 +8,7 @@ import { getCourseById, getUserProgress } from "@/db/queries";
 import { challengeProgress, challenges, userProgress } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
 
+const POINTS_TO_REFILL = 10;  
 
 export const upsertUserProgress = async (courseId: number) => {
   
@@ -115,7 +116,7 @@ export const refillHearts = async () => {
     throw new Error("Hearts are already full !");
   }
 
-  if (currentUserProgress.points < 50) {                          // Se verifica si el usuario tiene al menos 50 puntos para rellenar los corazones.
+  if (currentUserProgress.points < POINTS_TO_REFILL) {            // Se verifica si el usuario tiene al menos 10 puntos para rellenar los corazones.
     throw new Error("Not enough points !");
   }
 
@@ -123,7 +124,7 @@ export const refillHearts = async () => {
     .update(userProgress)                                         // Actualización del userProgress si no hay errores
     .set({
       hearts: 5,                                                  // Se establece el número de corazones del usuario en 5
-      points: currentUserProgress.points - 50,                    // Se resta 50 puntos de los puntos actuales del usuario.
+      points: currentUserProgress.points - POINTS_TO_REFILL,      // Se resta 10 puntos de los puntos actuales del usuario.
     })
     .where(eq(userProgress.userId, currentUserProgress.userId));
 
@@ -132,3 +133,4 @@ export const refillHearts = async () => {
   revalidatePath("/quests");
   revalidatePath("/leaderboard");
 };
+
