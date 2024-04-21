@@ -2,7 +2,7 @@ import { cache } from "react";
 import { db } from "./drizzle";
 import { auth } from "@clerk/nextjs";
 import { eq } from "drizzle-orm";
-import { challengeProgress, courses, lessons, units, userProgress } from "./schema";
+import { challengeProgress, courses, lessons, units, userProgress, userSubscription } from "./schema";
 
 
 export const getUserProgress = cache(async() => {
@@ -221,3 +221,25 @@ export const getLessonPercentage = cache(async () => {               // Calcula 
 
   return percentage;
 });
+
+const DAY_IN_MS = 86_400_000;   // 1 día
+export const getUserSubscription = cache(async () => {
+  const { userId } = await auth();
+
+  if (!userId) return null;
+
+  const data = await db.query.userSubscription.findFirst({
+    where: eq(userSubscription.userId, userId),
+  });
+
+  if (!data) return null;
+
+  const isActive =                                                        // Se calcula si la suscripción del usuario está activa. 
+    data.stripePriceId &&                                                 // Para ello se verifica que se pago por la suscripción (tiene un value)
+    data.stripeCurrentPeriodEnd?.getTime()! + DAY_IN_MS > Date.now();     // y que la fecha de finalización de la suscripción + 1 día > que la fecha actual  
+
+  return {
+    ...data,
+    isActive: !!isActive,
+  };
+})
