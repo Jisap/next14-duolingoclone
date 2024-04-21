@@ -228,7 +228,7 @@ export const getUserSubscription = cache(async () => {
 
   if (!userId) return null;
 
-  const data = await db.query.userSubscription.findFirst({
+  const data = await db.query.userSubscription.findFirst({               // Se busca en bd el userSubscription correspondiente al usuario logueado
     where: eq(userSubscription.userId, userId),
   });
 
