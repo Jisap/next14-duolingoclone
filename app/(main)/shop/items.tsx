@@ -32,7 +32,7 @@ export const Items = ({ hearts, points, hasActiveSubscription }:Props) => {
 
   const onUpgrade = () => {
     startTransition(() => {
-      createStripeUrl()
+      createStripeUrl() // action user-suscription
         .then((response) => {
           if(response.data) {
             window.location.href = response.data; // URL de la sesión -> usuario puede administrar su suscripción
@@ -102,7 +102,7 @@ export const Items = ({ hearts, points, hasActiveSubscription }:Props) => {
           onClick={onUpgrade}
           disabled={pending}
         >
-          {hasActiveSubscription ? "active" : "upgrade"}
+          {hasActiveSubscription ? "settings" : "upgrade"}
         </Button>
       </div>
 

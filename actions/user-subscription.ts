@@ -49,7 +49,7 @@ export const createStripeUrl = async () => {  //  Se encarga de crear una sesió
       },
     ],
     metadata: {
-      userId,
+      userId, // Este userId se usará en el webhook 
     },
     success_url: returnUrl, // URL a las que se redirigirá al usuario después de completar o cancelar el proceso de pago,
     cancel_url: returnUrl,
