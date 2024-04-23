@@ -6,7 +6,8 @@ import {
   getCourseProgress,
   getLessonPercentage, 
   getUnits, 
-  getUserProgress 
+  getUserProgress, 
+  getUserSubscription
 } from "@/db/queries"
 import { redirect } from "next/navigation"
 import { Unit } from "./unit"
@@ -21,17 +22,20 @@ const LearnPage = async () => {
   const courseProgressData = getCourseProgress()                    // activeLesson: firstUncompletedLesson,activeLessonId: firstUncompletedLesson?.id,
   const lessonPercentageData = getLessonPercentage()                // porcentaje de desafíos completados en una lección activa.
   const unitsData = getUnits()
+  const userSubscriptionData = getUserSubscription()                // Se busca en bd el userSubscription correspondiente al usuario logueado
 
   const [
     userProgress,
     units,
     courseProgress,
     lessonPercentage,
+    userSubscription
   ] = await Promise.all([                 // Resolución de la promesa de userProgress, unitsData, courseProgressData y lessonPercentageData
     userProgressData,
     unitsData,
     courseProgressData,
-    lessonPercentageData
+    lessonPercentageData,
+    userSubscriptionData
   ]);
 
   if(!userProgress || !userProgress.activeCourse) {
@@ -49,7 +53,7 @@ const LearnPage = async () => {
           activeCourse={userProgress.activeCourse}
           hearts={userProgress.hearts}
           points={userProgress.points}
-          hasActiveSubscription={false}
+          hasActiveSubscription={!!userSubscription?.isActive}
         />
       </StickyWrapper>
       <FeedWrapper>

@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db/drizzle";
-import { getUserProgress } from "@/db/queries";
+import { getUserProgress, getUserSubscription } from "@/db/queries";
 import { challengeProgress, challenges, userProgress } from "@/db/schema";
 import { auth } from "@clerk/nextjs";
 import { and, eq } from "drizzle-orm";
@@ -16,6 +16,7 @@ export const upsertChallengeProgress = async (challengeId: number) => {
   }
 
   const currentUserProgress = await getUserProgress();                          // Se busca en userProgress el userId que coincida con userId logueado
+  const userSubscription = await getUserSubscription();                         // Se busca en bd el userSubscription correspondiente al usuario logueado
 
   if (!currentUserProgress) {
     throw new Error("User not found");
@@ -40,7 +41,7 @@ export const upsertChallengeProgress = async (challengeId: number) => {
 
   const isPractice = !!existingChallengeProgress; // Si existe challengeProgress isPractice = true -> el usuario ya ha completado previamente el desafío (es una práctica)
 
-  if (currentUserProgress.hearts === 0 && !isPractice ) {
+  if (currentUserProgress.hearts === 0 && !isPractice && !userSubscription?.isActive ) {
     return { error: "hearts" };
   }
 

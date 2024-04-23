@@ -4,9 +4,10 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { auth, currentUser } from "@clerk/nextjs"
 import { db } from "@/db/drizzle";
-import { getCourseById, getUserProgress } from "@/db/queries";
+import { getCourseById, getUserProgress, getUserSubscription } from "@/db/queries";
 import { challengeProgress, challenges, userProgress } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
+import { userSubscription } from '../db/schema';
 
 const POINTS_TO_REFILL = 10;  
 
@@ -19,9 +20,9 @@ export const upsertUserProgress = async (courseId: number) => {
   const course = await getCourseById(courseId);
   if(!course) throw new Error('Course not found');
 
-  // if (!course.units.length || !course.units[0].lessons.length) {
-  //   throw new Error("Course is empty");
-  // }
+  if (!course.units.length || !course.units[0].lessons.length) {
+    throw new Error("Course is empty");
+  }
 
   const existingUserProgress = await getUserProgress(); // Se busca un user cuyo id coincida con el user logueado
   if(existingUserProgress){                             // Si existe
@@ -58,6 +59,8 @@ export const reduceHearts = async (challengeId: number) => {
 
   const currentUserProgress = await getUserProgress();       // Se busca en userProgress el userId que coincida con userId logueado
 
+  const userSubscription = await getUserSubscription();      // Se busca en bd el userSubscription correspondiente al usuario logueado 
+
   const challenge = await db.query.challenges.findFirst({    // Se busca un desafío específico en la base de datos utilizando el ID del desafío proporcionado.
     where: eq(challenges.id, challengeId),
   });
@@ -84,6 +87,10 @@ export const reduceHearts = async (challengeId: number) => {
 
   if (!currentUserProgress) {                           // Si no se encontró el userProgress la función devuelve un mensaje de error
     throw new Error("User progress not found");
+  }
+
+  if(userSubscription?.isActive){                       // Si el usuario tiene una subscription y se intenta reducir los corazones se lanza error
+    return {error: "susbcription"}
   }
 
   if (currentUserProgress.hearts === 0) {               // Este bloque verifica si al usuario le quedan corazones disponibles para realizar el desafío

@@ -30,16 +30,16 @@ export const getCourses = cache(async () => {
 export const getCourseById = cache(async (courseId: number) => {
   const data = await db.query.courses.findFirst({ // Se busca dentro de courses el primer resultado
     where: eq(courses.id, courseId),              // donde el id coincida con el pasado en el argumento
-    // with: {
-    //   units: {                                            // Se devolverán las unidades asociadas a la tabla units
-    //     orderBy: (units, { asc }) => [asc(units.order)],  // ordenadas ascendentemente
-    //     with: {
-    //       lessons: {                                            // Se devolverán las lessons asociadas a la tabla lesson
-    //         orderBy: (lessons, { asc }) => [asc(lessons.order)],// ordenadas ascedentemente
-    //       },
-    //     },
-    //   },
-    // },
+    with: {
+      units: {                                            // Se devolverán las unidades asociadas a la tabla units
+        orderBy: (units, { asc }) => [asc(units.order)],  // ordenadas ascendentemente
+        with: {
+          lessons: {                                            // Se devolverán las lessons asociadas a la tabla lesson
+            orderBy: (lessons, { asc }) => [asc(lessons.order)],// ordenadas ascedentemente
+          },
+        },
+      },
+    },
   });
 
   return data

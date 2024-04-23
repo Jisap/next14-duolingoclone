@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useAudio, useMount, useWindowSize } from "react-use";
 import Confetti from "react-confetti";
-import { challengeOptions, challenges } from "@/db/schema";
+import { challengeOptions, challenges, userSubscription } from "@/db/schema";
 import { upsertChallengeProgress } from "@/actions/challenge-progress";
 import { reduceHearts } from "@/actions/user-progress";
 import { Header } from "./header";
@@ -27,7 +27,9 @@ type Props = {
     completed: boolean;
     challengeOptions: typeof challengeOptions.$inferSelect[];
   })[];
-  userSubscription: any
+  userSubscription: typeof userSubscription.$inferSelect & {
+    isActive: boolean
+  } | null
 };
 
 export const Quiz = ({
