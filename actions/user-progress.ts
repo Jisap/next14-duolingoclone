@@ -8,8 +8,9 @@ import { getCourseById, getUserProgress, getUserSubscription } from "@/db/querie
 import { challengeProgress, challenges, userProgress } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
 import { userSubscription } from '../db/schema';
+import { POINTS_TO_REFILL } from "@/constants.ts";
 
-const POINTS_TO_REFILL = 10;  
+ 
 
 export const upsertUserProgress = async (courseId: number) => {
   
