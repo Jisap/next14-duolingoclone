@@ -12,6 +12,7 @@ import {
 import { redirect } from "next/navigation"
 import { Unit } from "./unit"
 import { lessons, units as unitsSchema } from "@/db/schema"
+import { Promo } from "@/components/Promo"
 
 
 
@@ -55,6 +56,7 @@ const LearnPage = async () => {
           points={userProgress.points}
           hasActiveSubscription={!!userSubscription?.isActive}
         />
+        {!userSubscription?.isActive && <Promo />}
       </StickyWrapper>
       <FeedWrapper>
         <Header title={userProgress.activeCourse.title} />  
