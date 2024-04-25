@@ -24,7 +24,7 @@ export const Quests = ({ points }: { points: number }) => {
           return (
             <li
               key={quest.title}
-              className="flex items-center w-full gap-x-3 border-t-2 py-4"
+              className="flex items-center w-full gap-x-3 pb-4"
             >
               <Image src="/points.svg" alt="Points" height={40} width={40} />
 
