@@ -1,6 +1,6 @@
-import { client, db } from "@/db/drizzle"
 import "dotenv/config"
 import { drizzle } from "drizzle-orm/postgres-js"
+import { client, db } from "@/db/drizzle"
 import * as schema from "../db/schema"
 
 
