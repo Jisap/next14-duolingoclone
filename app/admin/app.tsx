@@ -8,6 +8,9 @@ import CourseEdit from "./course/edit";
 import UnitList from "./unit/List";
 import UnitCreate from "./unit/Create";
 import UnitEdit from "./unit/Edit";
+import LessonCreate from "./lesson/Create";
+import LessonList from "./lesson/List";
+import LessonEdit from "./lesson/Edit";
 
 const dataProvider = simpleRestProvider("/api"); // Indica el endpoint para obtener la data y sus métodos de actualización y borrado
 
@@ -27,6 +30,13 @@ const App = () => {
         create={UnitCreate}
         list={UnitList} 
         edit={UnitEdit}
+      />
+      <Resource
+        name="lessons"
+        recordRepresentation="title"
+        create={LessonCreate}
+        list={LessonList}
+        edit={LessonEdit}
       />
     </Admin>
   )
