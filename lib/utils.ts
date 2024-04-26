@@ -8,3 +8,4 @@ export function cn(...inputs: ClassValue[]) {
 export function absoluteUrl(path: string) {               // path es la ruta relativa dentro la aplicación (dev = "/shop")
   return `${process.env.NEXT_PUBLIC_APP_URL}${path}`;     
 }
+
