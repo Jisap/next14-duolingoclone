@@ -14,6 +14,9 @@ import LessonEdit from "./lesson/Edit";
 import ChallengeCreate from "./challenge/Create";
 import ChallengeList from "./challenge/List";
 import ChallengeEdit from "./challenge/Edit";
+import ChallengeOptionCreate from "./challengeOption/Create";
+import ChallengeOptionList from "./challengeOption/List";
+import ChallengeOptionEdit from "./challengeOption/Edit";
 
 const dataProvider = simpleRestProvider("/api"); // Indica el endpoint para obtener la data y sus métodos de actualización y borrado
 
@@ -48,6 +51,15 @@ const App = () => {
         list={ChallengeList}
         edit={ChallengeEdit}
       />
+      <Resource
+        name="challengeOptions"   //api/challengeOptions
+        recordRepresentation="text"
+        create={ChallengeOptionCreate}
+        list={ChallengeOptionList}
+        edit={ChallengeOptionEdit}
+        options={{ label: "Challenge options" }}
+      />
+
     </Admin>
   )
 }
