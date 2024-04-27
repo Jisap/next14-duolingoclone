@@ -40,7 +40,7 @@ export const Quiz = ({
   userSubscription
 }: Props) => {
 
-  const{ open: openHeartsModal } = useHeartsModal();
+  const { open: openHeartsModal } = useHeartsModal();
   const { open: openPracticeModal } = usePracticeModal()
 
   const { width, height } = useWindowSize();
