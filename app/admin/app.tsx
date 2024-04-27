@@ -11,6 +11,9 @@ import UnitEdit from "./unit/Edit";
 import LessonCreate from "./lesson/Create";
 import LessonList from "./lesson/List";
 import LessonEdit from "./lesson/Edit";
+import ChallengeCreate from "./challenge/Create";
+import ChallengeList from "./challenge/List";
+import ChallengeEdit from "./challenge/Edit";
 
 const dataProvider = simpleRestProvider("/api"); // Indica el endpoint para obtener la data y sus métodos de actualización y borrado
 
@@ -32,11 +35,18 @@ const App = () => {
         edit={UnitEdit}
       />
       <Resource
-        name="lessons"
+        name="lessons"      //api/lessons
         recordRepresentation="title"
         create={LessonCreate}
         list={LessonList}
         edit={LessonEdit}
+      />
+      <Resource
+        name="challenges"     //api/challenges
+        recordRepresentation="question"
+        create={ChallengeCreate}
+        list={ChallengeList}
+        edit={ChallengeEdit}
       />
     </Admin>
   )

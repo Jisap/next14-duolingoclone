@@ -4,9 +4,21 @@ const CourseEdit = () => {
   return (
     <Edit>
       <SimpleForm>
-        <TextInput source="id" validate={[required()]} label="ID" />
-        <TextInput source="title" validate={[required()]} label="Title" />
-        <TextInput source="imageSrc" validate={[required()]} label="Image" />
+        <TextInput 
+          source="id" // este id indica la ruta /api/courses/[courseId]
+          validate={[required()]} 
+          label="ID" 
+        />
+        <TextInput 
+          source="title" 
+          validate={[required()]} 
+          label="Title" 
+        />
+        <TextInput 
+          source="imageSrc" 
+          validate={[required()]} 
+          label="Image" 
+        />
       </SimpleForm>
     </Edit>
   );
